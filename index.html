@@ -1,84 +1,83 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jenny's 旅遊清單</title>
-<link rel="stylesheet" href="index.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>商店 & 好物</title>
+        <link rel="stylesheet" href="index.css" />
+    </head>
+    <body>
+        <header>
+            <h1>商店 & 好物</h1>
+            <div class="subtitle">收藏商店 · 記錄好物</div>
+        </header>
 
-<header>
-  <h1>✈️ Jenny's 旅遊清單</h1>
-  <div class="subtitle">記錄好物 · 收藏商店</div>
-</header>
+        <main>
+            <div class="setup-section">
+                <h3>⚙️ Apps Script 設定</h3>
+                <p>請輸入你的 Google Apps Script 網址，儲存後所有頁面都會使用此設定。</p>
+                <div class="url-row">
+                    <input
+                        type="url"
+                        id="urlInput"
+                        placeholder="https://script.google.com/macros/s/…/exec"
+                    />
+                    <button class="btn-save-url" onclick="saveUrl()">儲存</button>
+                    <button class="btn-clear-url" onclick="clearUrl()">清除</button>
+                </div>
+                <div class="url-status" id="urlStatus"></div>
+            </div>
 
-<main>
+            <div class="stats-strip">
+                <div class="stat-item">
+                    <span class="stat-num purple" id="statProducts">
+                        <span class="loading-dots"><span></span><span></span><span></span></span>
+                    </span>
+                    <span class="stat-label">🛍️ 物品記錄</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num pink" id="statShops">
+                        <span class="loading-dots"><span></span><span></span><span></span></span>
+                    </span>
+                    <span class="stat-label">🗺️ 商店收藏</span>
+                </div>
+            </div>
 
-  <div class="setup-section">
-    <h3>⚙️ Apps Script 設定</h3>
-    <p>請輸入你的 Google Apps Script 網址，儲存後所有頁面都會使用此設定。</p>
-    <div class="url-row">
-      <input type="url" id="urlInput" placeholder="https://script.google.com/macros/s/…/exec">
-      <button class="btn-save-url" onclick="saveUrl()">儲存</button>
-      <button class="btn-clear-url" onclick="clearUrl()">清除</button>
-    </div>
-    <div class="url-status" id="urlStatus"></div>
-  </div>
+            <div class="cards-row">
+                <a class="dash-card" href="shops.html">
+                    <div class="card-banner banner-shops">🗺️</div>
+                    <div class="card-content">
+                        <h2>商店口袋名單</h2>
+                        <p>收藏想去和已去的商店，附上地址、地圖連結與備註。</p>
+                        <div class="card-tags">
+                            <span class="tag tag-pink">想去</span>
+                            <span class="tag tag-green">已去</span>
+                            <span class="tag tag-blue">城市</span>
+                            <span class="tag tag-pink">類型</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">前往 <span>→</span></div>
+                </a>
 
-  <div class="stats-strip">
-    <div class="stat-item">
-      <span class="stat-num purple" id="statProducts">
-        <span class="loading-dots"><span></span><span></span><span></span></span>
-      </span>
-      <span class="stat-label">🛍️ 物品記錄</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num pink" id="statShops">
-        <span class="loading-dots"><span></span><span></span><span></span></span>
-      </span>
-      <span class="stat-label">🗺️ 商店收藏</span>
-    </div>
-  </div>
+                <a class="dash-card" href="products.html">
+                    <div class="card-banner banner-products">🛍️</div>
+                    <div class="card-content">
+                        <h2>物品使用心得</h2>
+                        <p>記錄旅途中購買的好物，評分、心得、購買點一目瞭然。</p>
+                        <div class="card-tags">
+                            <span class="tag tag-purple">評分</span>
+                            <span class="tag tag-purple">品牌</span>
+                            <span class="tag tag-purple">國家</span>
+                            <span class="tag tag-orange">價格</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">前往 <span>→</span></div>
+                </a>
+            </div>
+        </main>
 
-  <div class="cards-row">
+        <footer>資料儲存於 Google Sheets · 僅供個人使用</footer>
 
-    <a class="dash-card" href="products.html">
-      <div class="card-banner banner-products">🛍️</div>
-      <div class="card-content">
-        <h2>物品使用心得</h2>
-        <p>記錄旅途中購買的好物，評分、心得、購買點一目瞭然。</p>
-        <div class="card-tags">
-          <span class="tag tag-purple">評分</span>
-          <span class="tag tag-purple">品牌</span>
-          <span class="tag tag-purple">國家</span>
-          <span class="tag tag-orange">價格</span>
-        </div>
-      </div>
-      <div class="card-footer">前往 <span>→</span></div>
-    </a>
-
-    <a class="dash-card" href="shops.html">
-      <div class="card-banner banner-shops">🗺️</div>
-      <div class="card-content">
-        <h2>商店口袋名單</h2>
-        <p>收藏想去和已去的商店，附上地址、地圖連結與備註。</p>
-        <div class="card-tags">
-          <span class="tag tag-pink">想去</span>
-          <span class="tag tag-green">已去</span>
-          <span class="tag tag-blue">城市</span>
-          <span class="tag tag-pink">類型</span>
-        </div>
-      </div>
-      <div class="card-footer">前往 <span>→</span></div>
-    </a>
-
-  </div>
-
-</main>
-
-<footer>資料儲存於 Google Sheets · 僅供個人使用</footer>
-
-<script src="index.js"></script>
-</body>
+        <script src="index.js"></script>
+    </body>
 </html>
