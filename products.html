@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物品使用心得</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  :root {
+    --color-primary:       #667eea;
+    --color-primary-light: #f0edff;
+    --header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  .tag-shop    { background: #f6ffed; color: #389e0d; }
+  .tag-price   { background: #fff7e6; color: #d46b08; font-size: .85rem; font-weight: 700; }
+  .card-review {
+    font-size: .88rem; color: #555; line-height: 1.6; flex: 1;
+    display: -webkit-box; -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🛍️ 物品使用心得</h1>
+  <div class="header-right">
+    <a class="nav-link" href="index.html">🏠 首頁</a>
+    <a class="nav-link" href="shops.html">🗺️ 商店口袋名單</a>
+    <button class="btn btn-primary" id="addBtn" onclick="openAddModal()" style="display:none">＋ 新增記錄</button>
+  </div>
+</header>
+
+<div class="toolbar" id="toolbar" style="display:none">
+  <input class="search-box" id="searchInput" type="text" placeholder="🔍 搜尋商品名稱、品牌、國家…" oninput="renderCards()">
+  <select class="filter-select" id="countryFilter" onchange="renderCards()">
+    <option value="">所有國家</option>
+  </select>
+  <select class="filter-select" id="ratingFilter" onchange="renderCards()">
+    <option value="">所有評分</option>
+    <option value="5">⭐⭐⭐⭐⭐ 5 星</option>
+    <option value="4">⭐⭐⭐⭐ 4 星以上</option>
+    <option value="3">⭐⭐⭐ 3 星以上</option>
+  </select>
+  <span class="stats" id="statsText"></span>
+</div>
+
+<div class="setup-banner" id="setupBanner">
+  <div class="icon">📊</div>
+  <h2>尚未連結 Google Sheets</h2>
+  <p>請先到首頁設定 Apps Script 網址。</p>
+  <a href="index.html" class="btn btn-primary">🏠 回首頁設定</a>
+</div>
+
+<div class="grid" id="cardGrid"></div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div id="loadingText">載入中…</div>
+</div>
+
+<div class="overlay" id="formOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="formTitle">新增記錄</h2>
+      <button class="close-btn" onclick="closeFormModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>商品名稱 *</label>
+          <input type="text" id="fName" placeholder="例：收納盒">
+        </div>
+        <div class="form-group">
+          <label>品牌</label>
+          <input type="text" id="fBrand" placeholder="例：無印良品">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>國家</label>
+          <input type="text" id="fCountry" placeholder="例：日本" list="countryList">
+          <datalist id="countryList"></datalist>
+        </div>
+        <div class="form-group">
+          <label>購買點</label>
+          <input type="text" id="fShop" placeholder="例：東京澀谷門市">
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label>幣別</label>
+          <input type="text" id="fCurrency" placeholder="JPY">
+        </div>
+        <div class="form-group">
+          <label>價格</label>
+          <input type="text" id="fPrice" placeholder="例：990">
+        </div>
+        <div class="form-group">
+          <label>評分</label>
+          <div class="star-input" id="starInput">
+            <span data-v="1" onclick="setStar(1)">★</span>
+            <span data-v="2" onclick="setStar(2)">★</span>
+            <span data-v="3" onclick="setStar(3)">★</span>
+            <span data-v="4" onclick="setStar(4)">★</span>
+            <span data-v="5" onclick="setStar(5)">★</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>商品圖片網址</label>
+        <input type="url" id="fImgUrl" placeholder="https://…" oninput="handleUrlInput(this.value)">
+        <img id="imgPreview" style="width:100%;max-height:200px;object-fit:contain;border-radius:8px;margin-top:8px;display:none">
+      </div>
+      <div class="form-group">
+        <label>使用心得</label>
+        <textarea id="fReview" placeholder="描述你的使用感受、優缺點、推薦程度…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>標籤（逗號分隔）</label>
+        <input type="text" id="fTags" placeholder="例：文具, 收納, 推薦">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-cancel" onclick="closeFormModal()">取消</button>
+      <button class="btn btn-save" id="saveBtn" onclick="saveRecord()">💾 儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="common.js"></script>
+<script src="products.js"></script>
+</body>
+</html>

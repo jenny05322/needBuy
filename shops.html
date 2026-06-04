@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商店口袋名單</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  :root {
+    --color-primary:       #f5576c;
+    --color-primary-light: #fff0f3;
+    --header-bg: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --card-img-bg:    #fef0f2;
+    --card-img-color: #f5576c;
+  }
+  .card-img img    { object-fit: cover; }
+  .tag-city        { background: #f0f5ff; color: #2f54eb; }
+  .tag-type        { background: #fff0f6; color: #eb2f96; }
+  .tag-status-want { background: #fff7e6; color: #d46b08; }
+  .tag-status-done { background: #f6ffed; color: #389e0d; }
+  .card-note {
+    font-size: .88rem; color: #555; line-height: 1.6; flex: 1;
+    display: -webkit-box; -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .card-link {
+    font-size: .82rem; color: #1677ff; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 0; word-break: break-all;
+  }
+  .card-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🗺️ 商店口袋名單</h1>
+  <div class="header-right">
+    <a class="nav-link" href="index.html">🏠 首頁</a>
+    <a class="nav-link" href="products.html">🛍️ 物品使用心得</a>
+    <button class="btn btn-primary" id="addBtn" onclick="openAddModal()" style="display:none">＋ 新增商店</button>
+  </div>
+</header>
+
+<div class="toolbar" id="toolbar" style="display:none">
+  <input class="search-box" id="searchInput" type="text" placeholder="🔍 搜尋商店名稱、城市、類型…" oninput="renderCards()">
+  <select class="filter-select" id="typeFilter" onchange="renderCards()">
+    <option value="">所有類型</option>
+  </select>
+  <select class="filter-select" id="countryFilter" onchange="renderCards()">
+    <option value="">所有國家</option>
+  </select>
+  <select class="filter-select" id="statusFilter" onchange="renderCards()">
+    <option value="">所有狀態</option>
+    <option value="想去">🔖 想去</option>
+    <option value="已去">✅ 已去</option>
+  </select>
+  <span class="stats" id="statsText"></span>
+</div>
+
+<div class="setup-banner" id="setupBanner">
+  <div class="icon">🗺️</div>
+  <h2>尚未連結 Google Sheets</h2>
+  <p>請先到首頁設定 Apps Script 網址。</p>
+  <a href="index.html" class="btn btn-primary">🏠 回首頁設定</a>
+</div>
+
+<div class="grid" id="cardGrid"></div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div id="loadingText">載入中…</div>
+</div>
+
+<div class="overlay" id="formOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="formTitle">新增商店</h2>
+      <button class="close-btn" onclick="closeFormModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>商店名稱 *</label>
+          <input type="text" id="fName" placeholder="例：唐吉訶德">
+        </div>
+        <div class="form-group">
+          <label>類型</label>
+          <select class="form-select" id="fType">
+            <option value="">請選擇</option>
+            <option>藥妝</option>
+            <option>超市</option>
+            <option>百貨</option>
+            <option>餐廳</option>
+            <option>咖啡廳</option>
+            <option>購物中心</option>
+            <option>便利商店</option>
+            <option>市集</option>
+            <option>其他</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>國家</label>
+          <input type="text" id="fCountry" placeholder="例：日本" list="countryList">
+          <datalist id="countryList"></datalist>
+        </div>
+        <div class="form-group">
+          <label>城市</label>
+          <input type="text" id="fCity" placeholder="例：大阪">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>地址</label>
+        <input type="text" id="fAddress" placeholder="例：大阪府大阪市…">
+      </div>
+      <div class="form-group">
+        <label>網址 / Google Maps 連結</label>
+        <input type="url" id="fUrl" placeholder="https://…">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>狀態</label>
+          <select class="form-select" id="fStatus">
+            <option value="想去">🔖 想去</option>
+            <option value="已去">✅ 已去</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>評分</label>
+          <div class="star-input" id="starInput">
+            <span data-v="1" onclick="setStar(1)">★</span>
+            <span data-v="2" onclick="setStar(2)">★</span>
+            <span data-v="3" onclick="setStar(3)">★</span>
+            <span data-v="4" onclick="setStar(4)">★</span>
+            <span data-v="5" onclick="setStar(5)">★</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>商店圖片網址</label>
+        <input type="url" id="fImgUrl" placeholder="https://…" oninput="handleUrlInput(this.value)">
+        <img id="imgPreview" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:8px;display:none">
+      </div>
+      <div class="form-group">
+        <label>備註</label>
+        <textarea id="fNote" placeholder="想去的原因、必買商品、注意事項…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-cancel" onclick="closeFormModal()">取消</button>
+      <button class="btn btn-save" id="saveBtn" onclick="saveRecord()">💾 儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="common.js"></script>
+<script src="shops.js"></script>
+</body>
+</html>
