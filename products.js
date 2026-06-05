@@ -83,21 +83,22 @@ function renderCards() {
 }
 
 function updateFilters() {
-    const countrySet = new Set(),
-        shopSet = new Set(),
-        tagSet = new Set();
+    const countrySet = new Set(), shopSet = new Set(), tagSet = new Set(), currencySet = new Set();
     for (const r of records) {
-        if (r.country) countrySet.add(r.country);
-        if (r.shop) shopSet.add(r.shop);
-        if (r.tags) tagSet.add(r.tags);
+        if (r.country)  countrySet.add(r.country);
+        if (r.shop)     shopSet.add(r.shop);
+        if (r.tags)     tagSet.add(r.tags);
+        if (r.currency) currencySet.add(r.currency);
     }
-    const countries = [...countrySet].sort();
-    const shops = [...shopSet].sort();
-    const tags = [...tagSet].sort();
+    const countries  = [...countrySet].sort();
+    const shops      = [...shopSet].sort();
+    const tags       = [...tagSet].sort();
+    const currencies = [...currencySet].sort();
     populateSelect(document.getElementById("countryFilter"), countries, "所有國家");
-    populateDatalist("countryList", countries);
-    populateDatalist("shopList", shops);
-    populateDatalist("tagsList", tags);
+    populateDatalist("countryList",  countries);
+    populateDatalist("shopList",     shops);
+    populateDatalist("tagsList",     tags);
+    populateDatalist("currencyList", currencies);
 }
 
 function openAddModal() {
