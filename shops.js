@@ -15,7 +15,7 @@ async function init() {
         updateFilters();
         renderCards();
     } catch (e) {
-        showToast("❌ 載入失敗：" + e.message);
+        showToast(`${ICONS.xCircle(14)} 載入失敗：` + e.message);
     } finally {
         setLoading(false);
     }
@@ -25,16 +25,10 @@ function renderCards() {
     const q = document.getElementById("searchInput").value.toLowerCase();
     const tf = document.getElementById("typeFilter").value;
     const cf = document.getElementById("countryFilter").value;
-    const sf = document.getElementById("statusFilter").value;
 
     const filtered = records.filter((r) => {
         const text = [r.name, r.type, r.country, r.city, r.address, r.note].join(" ").toLowerCase();
-        return (
-            (!q || text.includes(q)) &&
-            (!tf || r.type === tf) &&
-            (!cf || r.country === cf) &&
-            (!sf || r.status === sf)
-        );
+        return (!q || text.includes(q)) && (!tf || r.type === tf) && (!cf || r.country === cf);
     });
 
     document.getElementById("statsText").textContent =
@@ -42,44 +36,41 @@ function renderCards() {
     const grid = document.getElementById("cardGrid");
 
     if (!filtered.length) {
-        grid.innerHTML = `<div class="empty-state"><div class="icon">🏪</div><div>${records.length ? "找不到符合的商店" : "尚無記錄，點擊右上角新增！"}</div></div>`;
+        grid.innerHTML = `<div class="empty-state"><div class="icon">${ICONS.inbox()}</div><div>${records.length ? "找不到符合的商店" : "尚無記錄，點擊右上角新增！"}</div></div>`;
         return;
     }
 
     grid.innerHTML = filtered
         .map((r) => {
-            const isDone = r.status === "已去";
             const stars = Array.from(
                 { length: 5 },
-                (_, i) => `<span class="star ${i < (r.rating || 0) ? "" : "empty"}">★</span>`,
+                (_, i) =>
+                    `<span class="star ${i < (r.rating || 0) ? "" : "empty"}">${ICONS.starSolid()}</span>`,
             ).join("");
             const imgHtml = r.img
-                ? `<div class="card-img"><img src="${esc(r.img)}" onerror="this.parentElement.innerHTML='🏪'" alt="${esc(r.name)}"></div>`
-                : `<div class="card-img">🏪</div>`;
+                ? `<div class="card-img"><img src="${esc(r.img)}" onerror="this.style.display='none'" alt=""></div>`
+                : `<div class="card-img">${ICONS.buildingStorefront(48)}</div>`;
             const linkHtml = r.url
-                ? `<a class="card-link" href="${esc(r.url)}" target="_blank" rel="noopener">🔗 ${esc(r.url.replace(/^https?:\/\//, "").slice(0, 40))}${r.url.length > 47 ? "…" : ""}</a>`
+                ? `<a class="card-link" href="${esc(r.url)}" target="_blank" rel="noopener" title="${esc(r.url)}">${ICONS.link(18)}</a>`
                 : "";
             return `
         <div class="card">
+            ${r.type ? `<div class="card-category"><span class="tag tag-type">${esc(r.type)}</span></div>` : ""}
             ${imgHtml}
             <div class="card-body">
                 <div class="card-title">${esc(r.name)}</div>
                 <div class="tag-row">
-                    ${r.status ? `<span class="tag ${isDone ? "tag-status-done" : "tag-status-want"}">${isDone ? "✅" : "🔖"} ${esc(r.status)}</span>` : ""}
-                    ${r.type ? `<span class="tag tag-type">🏷️ ${esc(r.type)}</span>` : ""}
+                    ${r.country ? `<span class="tag tag-country">${ICONS.globe()} ${esc(r.country)}</span>` : ""}
+                    ${r.city ? `<span class="tag tag-city">${ICONS.buildingOffice2()} ${esc(r.city)}</span>` : ""}
                 </div>
-                <div class="tag-row">
-                    ${r.country ? `<span class="tag tag-country">🌍 ${esc(r.country)}</span>` : ""}
-                    ${r.city ? `<span class="tag tag-city">🏙️ ${esc(r.city)}</span>` : ""}
-                </div>
-                ${r.address ? `<div style="font-size:.82rem;color:#888;">📍 ${esc(r.address)}</div>` : ""}
+                ${r.address ? `<div style="color:#888;">${ICONS.mapPin()} ${esc(r.address)}</div>` : ""}
                 <div class="stars">${stars}</div>
                 ${r.note ? `<div class="card-note">${esc(r.note)}</div>` : ""}
                 ${linkHtml}
             </div>
             <div class="card-actions">
-                <button class="btn-edit-card" onclick="openEditModal('${r.id}')">編輯</button>
-                <button class="btn-del-card"  onclick="deleteRecord('${r.id}')">刪除</button>
+                <button class="btn-edit-card" onclick="openEditModal('${r.id}')">${ICONS.pencilSquare()} 編輯</button>
+                <button class="btn-del-card"  onclick="deleteRecord('${r.id}')">${ICONS.trash()} 刪除</button>
             </div>
         </div>`;
         })
@@ -87,44 +78,32 @@ function renderCards() {
 }
 
 function updateFilters() {
-    const typeSel = document.getElementById("typeFilter");
-    const countrySel = document.getElementById("countryFilter");
-    const curType = typeSel.value;
-    const curCountry = countrySel.value;
-    const types = [...new Set(records.map((r) => r.type).filter(Boolean))].sort();
-    const countries = [...new Set(records.map((r) => r.country).filter(Boolean))].sort();
-    typeSel.innerHTML =
-        '<option value="">所有類型</option>' +
-        types
-            .map(
-                (t) =>
-                    `<option value="${esc(t)}" ${t === curType ? "selected" : ""}>${esc(t)}</option>`,
-            )
-            .join("");
-    countrySel.innerHTML =
-        '<option value="">所有國家</option>' +
-        countries
-            .map(
-                (c) =>
-                    `<option value="${esc(c)}" ${c === curCountry ? "selected" : ""}>${esc(c)}</option>`,
-            )
-            .join("");
-    document.getElementById("countryList").innerHTML = countries
-        .map((c) => `<option value="${esc(c)}">`)
-        .join("");
+    const typeSet = new Set(),
+        countrySet = new Set(),
+        citySet = new Set();
+    for (const r of records) {
+        if (r.type) typeSet.add(r.type);
+        if (r.country) countrySet.add(r.country);
+        if (r.city) citySet.add(r.city);
+    }
+    const types = [...typeSet].sort();
+    const countries = [...countrySet].sort();
+    const cities = [...citySet].sort();
+    populateSelect(document.getElementById("typeFilter"), types, "所有類型");
+    populateSelect(document.getElementById("countryFilter"), countries, "所有國家");
+    populateDatalist("typeList", types);
+    populateDatalist("countryList", countries);
+    populateDatalist("cityList", cities);
 }
 
 function openAddModal() {
     editId = null;
     currentStar = 0;
     document.getElementById("formTitle").textContent = "新增商店";
-    ["fName", "fCity", "fAddress", "fUrl", "fNote", "fImgUrl"].forEach(
+    ["fName", "fType", "fCountry", "fCity", "fAddress", "fUrl", "fNote", "fImgUrl"].forEach(
         (id) => (document.getElementById(id).value = ""),
     );
-    document.getElementById("fType").value = "";
-    document.getElementById("fStatus").value = "想去";
-    document.getElementById("fCountry").value = "";
-    document.getElementById("imgPreview").style.display = "none";
+    handleUrlInput("");
     renderStars();
     document.getElementById("formOverlay").classList.add("active");
 }
@@ -141,16 +120,9 @@ function openEditModal(id) {
     document.getElementById("fCity").value = r.city || "";
     document.getElementById("fAddress").value = r.address || "";
     document.getElementById("fUrl").value = r.url || "";
-    document.getElementById("fStatus").value = r.status || "想去";
     document.getElementById("fNote").value = r.note || "";
     document.getElementById("fImgUrl").value = r.img || "";
-    const prev = document.getElementById("imgPreview");
-    if (r.img) {
-        prev.src = r.img;
-        prev.style.display = "block";
-    } else {
-        prev.style.display = "none";
-    }
+    handleUrlInput(r.img || "");
     renderStars();
     document.getElementById("formOverlay").classList.add("active");
 }
@@ -173,7 +145,6 @@ async function saveRecord() {
         city: document.getElementById("fCity").value.trim(),
         address: document.getElementById("fAddress").value.trim(),
         url: document.getElementById("fUrl").value.trim(),
-        status: document.getElementById("fStatus").value,
         note: document.getElementById("fNote").value.trim(),
         img: document.getElementById("fImgUrl").value.trim(),
         rating: currentStar,
@@ -192,9 +163,9 @@ async function saveRecord() {
     setLoading(true, "儲存到 Google Sheets…");
     try {
         await apiFetch(SHEET, { action: "save", ...record });
-        showToast("✅ 已儲存");
+        showToast(`${ICONS.checkCircle(14)} 已儲存`);
     } catch (e) {
-        showToast("❌ 儲存失敗：" + e.message);
+        showToast(`${ICONS.xCircle(14)} 儲存失敗：` + e.message);
     }
     setLoading(false);
     document.getElementById("saveBtn").disabled = false;
@@ -211,9 +182,9 @@ async function deleteRecord(id) {
     setLoading(true, "刪除中…");
     try {
         await apiFetch(SHEET, { action: "delete", id });
-        showToast("🗑️ 已刪除");
+        showToast(`${ICONS.trash(14)} 已刪除`);
     } catch (e) {
-        showToast("❌ 刪除失敗：" + e.message);
+        showToast(`${ICONS.xCircle(14)} 刪除失敗：` + e.message);
         records.splice(0, 0, r);
         renderCards();
     }
@@ -225,4 +196,5 @@ document.getElementById("formOverlay").addEventListener("click", (e) => {
     if (e.target === e.currentTarget) closeFormModal();
 });
 
+initStars();
 init();

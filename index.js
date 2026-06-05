@@ -12,7 +12,7 @@ function saveUrl() {
     }
     localStorage.setItem(LS_KEY, val);
     document.getElementById("urlInput").classList.add("saved");
-    showStatus("✅ 已儲存！正在測試連線…", "info");
+    showStatus(`${ICONS.checkCircle(14)} 已儲存！正在測試連線…`, "info");
     loadStats(val);
 }
 
@@ -31,7 +31,7 @@ function dots() {
 
 function showStatus(msg, type) {
     const el = document.getElementById("urlStatus");
-    el.textContent = msg;
+    el.innerHTML = msg;
     el.className = "url-status " + type;
 }
 
@@ -55,8 +55,8 @@ async function loadStats(url) {
     const [pc, sc] = await Promise.all([fetchCount(url, "Products"), fetchCount(url, "Shops")]);
     document.getElementById("statProducts").textContent = pc + " 筆";
     document.getElementById("statShops").textContent = sc + " 間";
-    if (pc !== "—") showStatus("✅ 連線成功", "ok");
-    else showStatus("❌ 連線失敗，請確認網址是否正確", "err");
+    if (pc !== "—") showStatus(`${ICONS.checkCircle(14)} 連線成功`, "ok");
+    else showStatus(`${ICONS.xCircle(14)} 連線失敗，請確認網址是否正確`, "err");
 }
 
 // 初始化
@@ -64,6 +64,6 @@ const saved = localStorage.getItem(LS_KEY) || "";
 if (saved) {
     document.getElementById("urlInput").value = saved;
     document.getElementById("urlInput").classList.add("saved");
-    showStatus("✅ 已設定", "ok");
+    showStatus(`${ICONS.checkCircle(14)} 已設定`, "ok");
 }
 loadStats();

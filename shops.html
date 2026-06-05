@@ -24,26 +24,13 @@
                 background: #fff0f6;
                 color: #eb2f96;
             }
-            .tag-status-want {
-                background: #fff7e6;
-                color: #d46b08;
-            }
-            .tag-status-done {
-                background: #f6ffed;
-                color: #389e0d;
-            }
             .card-note {
                 font-size: 0.88rem;
                 color: #555;
                 line-height: 1.6;
-                flex: 1;
-                display: -webkit-box;
-                -webkit-line-clamp: 3;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
+                white-space: pre-line;
             }
             .card-link {
-                font-size: 0.82rem;
                 color: #1677ff;
                 text-decoration: none;
                 display: inline-flex;
@@ -59,17 +46,66 @@
     </head>
     <body>
         <header>
-            <h1>🗺️ 商店口袋名單</h1>
+            <h1>商店口袋名單</h1>
             <div class="header-right">
-                <a class="nav-link" href="index.html">🏠 首頁</a>
-                <a class="nav-link" href="products.html">🛍️ 物品使用心得</a>
+                <a class="nav-link" href="index.html">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        width="18"
+                        height="18"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                        />
+                    </svg>
+                    首頁
+                </a>
+                <a class="nav-link" href="products.html">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        width="18"
+                        height="18"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                        />
+                    </svg>
+                    物品
+                </a>
                 <button
                     class="btn btn-primary"
                     id="addBtn"
                     onclick="openAddModal()"
                     style="display: none"
                 >
-                    ＋ 新增商店
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        width="18"
+                        height="18"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 4.5v15m7.5-7.5h-15"
+                        />
+                    </svg>
+                    新增
                 </button>
             </div>
         </header>
@@ -79,7 +115,7 @@
                 class="search-box"
                 id="searchInput"
                 type="text"
-                placeholder="🔍 搜尋商店名稱、城市、類型…"
+                placeholder="搜尋商店名稱、城市、類型…"
                 oninput="renderCards()"
             />
             <select class="filter-select" id="typeFilter" onchange="renderCards()">
@@ -88,19 +124,48 @@
             <select class="filter-select" id="countryFilter" onchange="renderCards()">
                 <option value="">所有國家</option>
             </select>
-            <select class="filter-select" id="statusFilter" onchange="renderCards()">
-                <option value="">所有狀態</option>
-                <option value="想去">🔖 想去</option>
-                <option value="已去">✅ 已去</option>
-            </select>
+
             <span class="stats" id="statsText"></span>
         </div>
 
         <div class="setup-banner" id="setupBanner">
-            <div class="icon">🗺️</div>
+            <div class="icon">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    width="64"
+                    height="64"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.159.69.159 1.006 0Z"
+                    />
+                </svg>
+            </div>
             <h2>尚未連結 Google Sheets</h2>
             <p>請先到首頁設定 Apps Script 網址。</p>
-            <a href="index.html" class="btn btn-primary">🏠 回首頁設定</a>
+            <a href="index.html" class="btn btn-primary">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    width="18"
+                    height="18"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                    />
+                </svg>
+                回首頁設定
+            </a>
         </div>
 
         <div class="grid" id="cardGrid"></div>
@@ -114,7 +179,23 @@
             <div class="modal">
                 <div class="modal-header">
                     <h2 id="formTitle">新增商店</h2>
-                    <button class="close-btn" onclick="closeFormModal()">✕</button>
+                    <button class="close-btn" onclick="closeFormModal()">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            width="20"
+                            height="20"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 18 18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-row">
@@ -124,21 +205,11 @@
                         </div>
                         <div class="form-group">
                             <label>類型</label>
-                            <select class="form-select" id="fType">
-                                <option value="">請選擇</option>
-                                <option>藥妝</option>
-                                <option>超市</option>
-                                <option>百貨</option>
-                                <option>餐廳</option>
-                                <option>咖啡廳</option>
-                                <option>購物中心</option>
-                                <option>便利商店</option>
-                                <option>市集</option>
-                                <option>其他</option>
-                            </select>
+                            <input type="text" id="fType" placeholder="例：藥妝" list="typeList" />
+                            <datalist id="typeList"></datalist>
                         </div>
                     </div>
-                    <div class="form-row">
+                    <div class="form-row-3">
                         <div class="form-group">
                             <label>國家</label>
                             <input
@@ -151,7 +222,18 @@
                         </div>
                         <div class="form-group">
                             <label>城市</label>
-                            <input type="text" id="fCity" placeholder="例：大阪" />
+                            <input type="text" id="fCity" placeholder="例：大阪" list="cityList" />
+                            <datalist id="cityList"></datalist>
+                        </div>
+                        <div class="form-group">
+                            <label>評分</label>
+                            <div class="star-input" id="starInput">
+                                <span data-v="1" onclick="setStar(1)"></span>
+                                <span data-v="2" onclick="setStar(2)"></span>
+                                <span data-v="3" onclick="setStar(3)"></span>
+                                <span data-v="4" onclick="setStar(4)"></span>
+                                <span data-v="5" onclick="setStar(5)"></span>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -161,25 +243,6 @@
                     <div class="form-group">
                         <label>網址 / Google Maps 連結</label>
                         <input type="url" id="fUrl" placeholder="https://…" />
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>狀態</label>
-                            <select class="form-select" id="fStatus">
-                                <option value="想去">🔖 想去</option>
-                                <option value="已去">✅ 已去</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>評分</label>
-                            <div class="star-input" id="starInput">
-                                <span data-v="1" onclick="setStar(1)">★</span>
-                                <span data-v="2" onclick="setStar(2)">★</span>
-                                <span data-v="3" onclick="setStar(3)">★</span>
-                                <span data-v="4" onclick="setStar(4)">★</span>
-                                <span data-v="5" onclick="setStar(5)">★</span>
-                            </div>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label>商店圖片網址</label>
@@ -195,7 +258,6 @@
                                 width: 100%;
                                 max-height: 180px;
                                 object-fit: cover;
-                                border-radius: 8px;
                                 margin-top: 8px;
                                 display: none;
                             "
@@ -211,15 +273,14 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-cancel" onclick="closeFormModal()">取消</button>
-                    <button class="btn btn-save" id="saveBtn" onclick="saveRecord()">
-                        💾 儲存
-                    </button>
+                    <button class="btn btn-save" id="saveBtn" onclick="saveRecord()">儲存</button>
                 </div>
             </div>
         </div>
 
         <div class="toast" id="toast"></div>
 
+        <script src="icons.js"></script>
         <script src="common.js"></script>
         <script src="shops.js"></script>
     </body>

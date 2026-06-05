@@ -3,6 +3,11 @@
     margin: 0;
     padding: 0;
 }
+svg {
+    display: inline-block;
+    vertical-align: -0.125em;
+    flex-shrink: 0;
+}
 
 body {
     font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
@@ -21,12 +26,16 @@ header {
     text-align: center;
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
 }
+header .header-icon {
+    opacity: 0.85;
+    margin-bottom: 8px;
+}
+
 header h1 {
     font-size: 2rem;
     letter-spacing: 1px;
 }
 header .subtitle {
-    font-size: 0.95rem;
     opacity: 0.85;
     margin-top: 6px;
     letter-spacing: 0.5px;
@@ -94,7 +103,6 @@ main {
     font-weight: 700;
 }
 .card-content p {
-    font-size: 0.88rem;
     color: #666;
     line-height: 1.7;
 }
@@ -108,7 +116,7 @@ main {
 .tag {
     padding: 3px 10px;
     border-radius: 20px;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 600;
 }
 .tag-purple {
@@ -138,7 +146,6 @@ main {
     justify-content: flex-end;
     padding: 14px 24px;
     border-top: 1px solid #f0f0f0;
-    font-size: 0.85rem;
     font-weight: 600;
     color: #888;
     gap: 6px;
@@ -173,7 +180,6 @@ main {
     font-weight: 800;
 }
 .stat-label {
-    font-size: 0.82rem;
     color: #888;
 }
 .stat-num.purple {
@@ -233,7 +239,6 @@ main {
     color: #333;
 }
 .setup-section p {
-    font-size: 0.84rem;
     color: #888;
     line-height: 1.6;
 }
@@ -288,7 +293,7 @@ main {
     background: #ffd9d9;
 }
 .url-status {
-    font-size: 0.82rem;
+    font-size: 0.9rem;
     padding: 6px 10px;
     border-radius: 6px;
     display: none;
@@ -313,8 +318,7 @@ main {
 footer {
     text-align: center;
     padding: 20px;
-    font-size: 0.8rem;
-    color: #bbb;
+    color: #888;
 }
 
 /* ── Responsive ──────────────────────────────────────── */

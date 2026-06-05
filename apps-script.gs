@@ -15,7 +15,7 @@
 
 const SHEET_CONFIGS = {
   Products: ['id','name','brand','country','shop','currency','price','review','tags','img','rating'],
-  Shops:   ['id','name','type','country','city','address','url','status','note','tags','img','rating'],
+  Shops:   ['id','name','type','country','city','address','url','note','img','rating'],
 };
 
 function doGet(e) {

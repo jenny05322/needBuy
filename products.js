@@ -12,10 +12,10 @@ async function init() {
     setLoading(true, "從 Google Sheets 載入中…");
     try {
         records = await apiFetch(SHEET, { action: "list" });
-        updateCountryFilter();
+        updateFilters();
         renderCards();
     } catch (e) {
-        showToast("❌ 載入失敗：" + e.message);
+        showToast(`${ICONS.xCircle(14)} 載入失敗：` + e.message);
     } finally {
         setLoading(false);
     }
@@ -38,7 +38,7 @@ function renderCards() {
     const grid = document.getElementById("cardGrid");
 
     if (!filtered.length) {
-        grid.innerHTML = `<div class="empty-state"><div class="icon">📭</div><div>${records.length ? "找不到符合的記錄" : "尚無記錄，點擊右上角新增！"}</div></div>`;
+        grid.innerHTML = `<div class="empty-state"><div class="icon">${ICONS.inbox()}</div><div>${records.length ? "找不到符合的記錄" : "尚無記錄，點擊右上角新增！"}</div></div>`;
         return;
     }
 
@@ -46,64 +46,58 @@ function renderCards() {
         .map((r) => {
             const stars = Array.from(
                 { length: 5 },
-                (_, i) => `<span class="star ${i < (r.rating || 0) ? "" : "empty"}">★</span>`,
+                (_, i) =>
+                    `<span class="star ${i < (r.rating || 0) ? "" : "empty"}">${ICONS.starSolid()}</span>`,
             ).join("");
             const imgHtml = r.img
-                ? `<div class="card-img"><img src="${esc(r.img)}" onerror="this.parentElement.innerHTML='📷'" alt="${esc(r.name)}"></div>`
-                : `<div class="card-img">📷</div>`;
-            const tagsHtml = r.tags
-                ? r.tags
-                      .split(",")
-                      .map((t) => t.trim())
-                      .filter(Boolean)
-                      .map(
-                          (t) =>
-                              `<span class="tag" style="background:#f9f0ff;color:#722ed1">${esc(t)}</span>`,
-                      )
-                      .join("")
+                ? `<div class="card-img"><img src="${esc(r.img)}" onerror="this.style.display='none'" alt=""></div>`
+                : `<div class="card-img">${ICONS.photo()}</div>`;
+            const categoryHtml = r.tags
+                ? `<span class="tag" style="background:#f9f0ff;color:#722ed1">${esc(r.tags)}</span>`
                 : "";
             const price = r.price
                 ? `${r.currency ? esc(r.currency) + " " : ""}${esc(r.price)}`
                 : "";
             return `
         <div class="card">
+            ${categoryHtml ? `<div class="card-category">${categoryHtml}</div>` : ""}
             ${imgHtml}
             <div class="card-body">
                 <div class="card-title">${esc(r.name)}</div>
-                ${r.brand ? `<div style="font-size:.82rem;color:#888;">🏷️ ${esc(r.brand)}</div>` : ""}
+                ${r.brand ? `<div style="color:#888;">${ICONS.buildingStorefront()} ${esc(r.brand)}</div>` : ""}
                 <div class="tag-row">
-                    ${r.country ? `<span class="tag tag-country">🌍 ${esc(r.country)}</span>` : ""}
-                    ${r.shop ? `<span class="tag tag-shop">🏪 ${esc(r.shop)}</span>` : ""}
-                    ${price ? `<span class="tag tag-price">💰 ${price}</span>` : ""}
+                    ${r.country ? `<span class="tag tag-country">${ICONS.globe()} ${esc(r.country)}</span>` : ""}
+                    ${r.shop ? `<span class="tag tag-shop">${ICONS.buildingOffice2()} ${esc(r.shop)}</span>` : ""}
+                    ${price ? `<span class="tag tag-price">${ICONS.banknotes()} ${price}</span>` : ""}
                 </div>
                 <div class="stars">${stars}</div>
                 <div class="card-review">${esc(r.review)}</div>
-                ${tagsHtml ? `<div class="tag-row">${tagsHtml}</div>` : ""}
             </div>
             <div class="card-actions">
-                <button class="btn-edit-card" onclick="openEditModal('${r.id}')">編輯</button>
-                <button class="btn-del-card"  onclick="deleteRecord('${r.id}')">刪除</button>
+                <button class="btn-edit-card" onclick="openEditModal('${r.id}')">${ICONS.pencilSquare()} 編輯</button>
+                <button class="btn-del-card"  onclick="deleteRecord('${r.id}')">${ICONS.trash()} 刪除</button>
             </div>
         </div>`;
         })
         .join("");
 }
 
-function updateCountryFilter() {
-    const sel = document.getElementById("countryFilter");
-    const cur = sel.value;
-    const countries = [...new Set(records.map((r) => r.country).filter(Boolean))].sort();
-    sel.innerHTML =
-        '<option value="">所有國家</option>' +
-        countries
-            .map(
-                (c) =>
-                    `<option value="${esc(c)}" ${c === cur ? "selected" : ""}>${esc(c)}</option>`,
-            )
-            .join("");
-    document.getElementById("countryList").innerHTML = countries
-        .map((c) => `<option value="${esc(c)}">`)
-        .join("");
+function updateFilters() {
+    const countrySet = new Set(),
+        shopSet = new Set(),
+        tagSet = new Set();
+    for (const r of records) {
+        if (r.country) countrySet.add(r.country);
+        if (r.shop) shopSet.add(r.shop);
+        if (r.tags) tagSet.add(r.tags);
+    }
+    const countries = [...countrySet].sort();
+    const shops = [...shopSet].sort();
+    const tags = [...tagSet].sort();
+    populateSelect(document.getElementById("countryFilter"), countries, "所有國家");
+    populateDatalist("countryList", countries);
+    populateDatalist("shopList", shops);
+    populateDatalist("tagsList", tags);
 }
 
 function openAddModal() {
@@ -121,7 +115,7 @@ function openAddModal() {
         "fTags",
         "fImgUrl",
     ].forEach((id) => (document.getElementById(id).value = ""));
-    document.getElementById("imgPreview").style.display = "none";
+    handleUrlInput("");
     renderStars();
     document.getElementById("formOverlay").classList.add("active");
 }
@@ -141,13 +135,7 @@ function openEditModal(id) {
     document.getElementById("fReview").value = r.review || "";
     document.getElementById("fTags").value = r.tags || "";
     document.getElementById("fImgUrl").value = r.img || "";
-    const prev = document.getElementById("imgPreview");
-    if (r.img) {
-        prev.src = r.img;
-        prev.style.display = "block";
-    } else {
-        prev.style.display = "none";
-    }
+    handleUrlInput(r.img || "");
     renderStars();
     document.getElementById("formOverlay").classList.add("active");
 }
@@ -159,7 +147,7 @@ function closeFormModal() {
 async function saveRecord() {
     const name = document.getElementById("fName").value.trim();
     if (!name) {
-        alert("請輸入商品名稱");
+        alert("請輸入物品名稱");
         return;
     }
 
@@ -189,13 +177,13 @@ async function saveRecord() {
     setLoading(true, "儲存到 Google Sheets…");
     try {
         await apiFetch(SHEET, { action: "save", ...record });
-        showToast("✅ 已儲存");
+        showToast(`${ICONS.checkCircle(14)} 已儲存`);
     } catch (e) {
-        showToast("❌ 儲存失敗：" + e.message);
+        showToast(`${ICONS.xCircle(14)} 儲存失敗：` + e.message);
     }
     setLoading(false);
     document.getElementById("saveBtn").disabled = false;
-    updateCountryFilter();
+    updateFilters();
     renderCards();
     closeFormModal();
 }
@@ -208,18 +196,19 @@ async function deleteRecord(id) {
     setLoading(true, "刪除中…");
     try {
         await apiFetch(SHEET, { action: "delete", id });
-        showToast("🗑️ 已刪除");
+        showToast(`${ICONS.trash(14)} 已刪除`);
     } catch (e) {
-        showToast("❌ 刪除失敗：" + e.message);
+        showToast(`${ICONS.xCircle(14)} 刪除失敗：` + e.message);
         records.splice(0, 0, r);
         renderCards();
     }
     setLoading(false);
-    updateCountryFilter();
+    updateFilters();
 }
 
 document.getElementById("formOverlay").addEventListener("click", (e) => {
     if (e.target === e.currentTarget) closeFormModal();
 });
 
+initStars();
 init();
