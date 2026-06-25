@@ -48,7 +48,7 @@
                             d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
                         />
                     </svg>
-                    首頁
+                    <span class="btn-label">首頁</span>
                 </a>
                 <a class="nav-link" href="shops.html">
                     <svg
@@ -66,7 +66,7 @@
                             d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.159.69.159 1.006 0Z"
                         />
                     </svg>
-                    商店
+                    <span class="btn-label">商店</span>
                 </a>
                 <button
                     class="btn btn-primary"
@@ -89,7 +89,7 @@
                             d="M12 4.5v15m7.5-7.5h-15"
                         />
                     </svg>
-                    新增
+                    <span class="btn-label">新增</span>
                 </button>
             </div>
         </header>
@@ -278,6 +278,12 @@
                 </div>
             </div>
         </div>
+
+        <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到頂端">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="22" height="22">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+            </svg>
+        </button>
 
         <div class="toast" id="toast"></div>
 

@@ -196,5 +196,9 @@ document.getElementById("formOverlay").addEventListener("click", (e) => {
     if (e.target === e.currentTarget) closeFormModal();
 });
 
+window.addEventListener("scroll", () => {
+    document.getElementById("backToTop").classList.toggle("visible", window.scrollY > 300);
+});
+
 initStars();
 init();

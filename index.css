@@ -171,9 +171,18 @@ main {
     flex-direction: column;
     gap: 4px;
     border-right: 1px solid #f0f0f0;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
 }
 .stat-item:last-child {
     border-right: none;
+}
+.stat-item:hover {
+    background: #fafafa;
+}
+.stat-item * {
+    text-decoration: none;
 }
 .stat-num {
     font-size: 1.8rem;
@@ -287,6 +296,7 @@ main {
     font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
+    white-space: nowrap;
     transition: background 0.2s;
 }
 .btn-clear-url:hover {
